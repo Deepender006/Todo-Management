@@ -4,6 +4,7 @@ const createTodo = async (req, res) => {
   try {
     const todo = await Todo.create({
       taskName: req.body.taskName,
+      status:req.body.status,
       user: req.user.id,
     });
 
@@ -74,6 +75,7 @@ const updateTodo = async (req, res) => {
             },
             {
   taskName: req.body.taskName,
+  status:req.body.status,
 },
             { new: true }
         );

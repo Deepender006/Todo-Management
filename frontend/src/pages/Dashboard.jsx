@@ -7,6 +7,7 @@ function Dashboard() {
   const navigate = useNavigate();
 
   const [taskName, setTaskName] = useState("");
+  const [status, setStatus] = useState("Not Started");
   const [todos, setTodos] = useState([]);
   const [editId, setEditId] = useState(null);
 
@@ -33,7 +34,10 @@ function Dashboard() {
       if (editId) {
         await API.put(
           `/todos/${editId}`,
-          { taskName },
+          {
+            taskName,
+            status,
+          },
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -46,7 +50,10 @@ function Dashboard() {
       } else {
         await API.post(
           "/todos",
-          { taskName },
+          {
+            taskName,
+            status,
+          },
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -58,15 +65,19 @@ function Dashboard() {
       }
 
       setTaskName("");
+      setStatus("Not Started");
       getTodos();
     } catch (err) {
       console.log(err.response?.data || err.message);
     }
   };
+
   const editTodo = (todo) => {
     setTaskName(todo.taskName);
+    setStatus(todo.status);
     setEditId(todo._id);
   };
+
   const deleteTodo = async (id) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this todo?"
@@ -87,6 +98,7 @@ function Dashboard() {
       console.log(err.response?.data || err.message);
     }
   };
+
   const logout = () => {
     localStorage.removeItem("token");
     navigate("/login");
@@ -99,7 +111,6 @@ function Dashboard() {
   return (
     <div className="dashboard-container">
       <div className="dashboard-card">
-
         <div className="dashboard-header">
           <h2>Todo Dashboard</h2>
 
@@ -116,6 +127,15 @@ function Dashboard() {
             onChange={(e) => setTaskName(e.target.value)}
           />
 
+          <select
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+          >
+            <option value="Not Started">Not Started</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Completed">Completed</option>
+          </select>
+
           <button className="add-btn" onClick={saveTodo}>
             {editId ? "Update Todo" : "Add Todo"}
           </button>
@@ -126,7 +146,11 @@ function Dashboard() {
             {todos.length > 0 ? (
               todos.map((todo) => (
                 <li key={todo._id}>
-                  <span>{todo.taskName}</span>
+                  <div>
+                    <span>{todo.taskName}</span>
+                    <br />
+                    <span>Status: {todo.status}</span>
+                  </div>
 
                   <div>
                     <button onClick={() => editTodo(todo)}>
@@ -144,7 +168,6 @@ function Dashboard() {
             )}
           </ul>
         </div>
-
       </div>
     </div>
   );

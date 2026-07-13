@@ -50,7 +50,13 @@ body {
   padding: 12px;
   font-size: 16px;
 }
-
+.todo-input select {
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
 button {
   padding: 10px 18px;
   color: white;
