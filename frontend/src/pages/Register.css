@@ -1,0 +1,61 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.register-container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.register-card {
+  width: 350px;
+  padding: 20px;
+  border: 5px solid black;
+  border-radius: 10px;
+}
+
+h2,
+.subtitle,
+.login-link {
+  text-align: center;
+}
+
+.subtitle {
+  margin: 10px;
+  color:gray;
+}
+
+.input-group {
+  margin: 10px ;
+}
+
+label {
+  display: block;
+}
+
+input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  background: blue;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.login-link {
+  margin-top: 15px;
+}
+
+a {
+  color: blue;
+}
