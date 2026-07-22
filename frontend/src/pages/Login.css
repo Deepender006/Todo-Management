@@ -5,57 +5,141 @@
 }
 
 .login-container {
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
+  background-image: url("https://images.unsplash.com/photo-1499750310107-5fef28a66643");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .login-card {
-  width: 500px;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
+  width: 450px;
+   min-height: 520px;
+  padding: 45px;
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(8px);
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+  animation: slideUp 0.5s ease;
 }
 
-h2,
-.subtitle,
-.register-link {
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+h1 {
   text-align: center;
+  color: #111827;
+  font-size: 30px;
+  margin-bottom: 10px;
 }
 
 .subtitle {
-  margin: 10px;
-  color: black;
+  text-align: center;
+  color: #6b7280;
+  margin-bottom: 30px;
 }
 
 .input-group {
-  margin: 10px ;
+  margin-bottom: 18px;
 }
 
 label {
   display: block;
+  margin-bottom: 7px;
+  color: #374151;
+  font-weight: 600;
 }
 
 input {
   width: 100%;
-  padding: 8px;
-  margin-top: 5px;
+  padding: 13px 15px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  outline: none;
+  font-size: 15px;
+  background: rgba(255,255,255,0.9);
 }
 
-button {
-  width: 100%;
-  padding: 10px;
-  background: blue;
-  color: white;
-  border: 2px solid black;
+input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 8px rgba(37,99,235,0.3);
+}
+
+.password-wrapper {
+  position: relative;
+}
+
+.password-wrapper input {
+  padding-right: 45px;
+}
+
+.eye-icon {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
   cursor: pointer;
+  color: #6b7280;
+  font-size: 18px;
+}
+
+.eye-icon:hover {
+  color: #2563eb;
+}
+
+.login-btn {
+  width: 100%;
+  padding: 14px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  color: white;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.login-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 25px rgba(37,99,235,0.35);
 }
 
 .register-link {
-  margin-top: 15px;
+  text-align: center;
+  margin-top: 22px;
+  color: #4b5563;
 }
 
 a {
-  color:black;
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+@media(max-width:500px) {
+  .login-card {
+    width: 90%;
+    padding: 30px;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
 }

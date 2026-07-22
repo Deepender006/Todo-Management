@@ -8,6 +8,7 @@ function Dashboard() {
 
   const [taskName, setTaskName] = useState("");
   const [status, setStatus] = useState("Not Started");
+  const [priority, setPriority] = useState("Medium");
   const [todos, setTodos] = useState([]);
   const [editId, setEditId] = useState(null);
 
@@ -20,7 +21,6 @@ function Dashboard() {
           Authorization: `Bearer ${token}`,
         },
       });
-
       setTodos(res.data.data);
     } catch (err) {
       console.log(err.response?.data || err.message);
@@ -37,6 +37,7 @@ function Dashboard() {
           {
             taskName,
             status,
+            priority,
           },
           {
             headers: {
@@ -44,15 +45,14 @@ function Dashboard() {
             },
           }
         );
-
         alert("Todo Updated Successfully");
-        setEditId(null);
       } else {
         await API.post(
           "/todos",
           {
             taskName,
             status,
+            priority,
           },
           {
             headers: {
@@ -60,13 +60,15 @@ function Dashboard() {
             },
           }
         );
-
         alert("Todo Added Successfully");
       }
 
       setTaskName("");
       setStatus("Not Started");
-      getTodos();
+      setPriority("Medium");
+      setEditId(null);
+      await getTodos();
+
     } catch (err) {
       console.log(err.response?.data || err.message);
     }
@@ -75,14 +77,12 @@ function Dashboard() {
   const editTodo = (todo) => {
     setTaskName(todo.taskName);
     setStatus(todo.status);
+    setPriority(todo.priority);
     setEditId(todo._id);
   };
 
   const deleteTodo = async (id) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this todo?"
-    );
-
+    const confirmDelete = window.confirm("Are you sure you want to delete this todo?");
     if (!confirmDelete) return;
 
     try {
@@ -91,9 +91,8 @@ function Dashboard() {
           Authorization: `Bearer ${token}`,
         },
       });
-
       alert("Todo Deleted Successfully");
-      getTodos();
+      await getTodos();
     } catch (err) {
       console.log(err.response?.data || err.message);
     }
@@ -113,10 +112,7 @@ function Dashboard() {
       <div className="dashboard-card">
         <div className="dashboard-header">
           <h2>Todo Dashboard</h2>
-
-          <button className="logout-btn" onClick={logout}>
-            Logout
-          </button>
+          <button className="logout-btn" onClick={logout}>Logout</button>
         </div>
 
         <div className="todo-input">
@@ -127,13 +123,16 @@ function Dashboard() {
             onChange={(e) => setTaskName(e.target.value)}
           />
 
-          <select
-            value={status}
-            onChange={(e) => setStatus(e.target.value)}
-          >
+          <select value={status} onChange={(e) => setStatus(e.target.value)}>
             <option value="Not Started">Not Started</option>
             <option value="In Progress">In Progress</option>
             <option value="Completed">Completed</option>
+          </select>
+
+          <select value={priority} onChange={(e) => setPriority(e.target.value)}>
+            <option value="Low">Low Priority</option>
+            <option value="Medium">Medium Priority</option>
+            <option value="High">High Priority</option>
           </select>
 
           <button className="add-btn" onClick={saveTodo}>
@@ -146,20 +145,15 @@ function Dashboard() {
             {todos.length > 0 ? (
               todos.map((todo) => (
                 <li key={todo._id}>
-                  <div>
+                  <div className="todo-details">
                     <span>{todo.taskName}</span>
-                    <br />
                     <span>Status: {todo.status}</span>
+                    <span>Priority: {todo.priority}</span>
                   </div>
 
                   <div>
-                    <button onClick={() => editTodo(todo)}>
-                      Edit
-                    </button>
-
-                    <button onClick={() => deleteTodo(todo._id)}>
-                      Delete
-                    </button>
+                    <button onClick={() => editTodo(todo)}>Edit</button>
+                    <button onClick={() => deleteTodo(todo._id)}>Delete</button>
                   </div>
                 </li>
               ))

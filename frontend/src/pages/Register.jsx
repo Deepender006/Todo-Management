@@ -1,10 +1,14 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import API from "../api";
 import "./Register.css";
 
 function Register() {
   const navigate = useNavigate();
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -22,6 +26,7 @@ function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (formData.password !== formData.confirmPassword) {
       alert("Passwords do not match");
       return;
@@ -35,19 +40,22 @@ function Register() {
       });
 
       alert(res.data.message || "User Registered Successfully");
+
       setFormData({
         name: "",
         email: "",
         password: "",
         confirmPassword: "",
       });
+
       navigate("/login");
+
     } catch (err) {
       console.log(err);
 
       alert(
         err.response?.data?.message ||
-          "Registration Failed. Please try again."
+        "Registration Failed. Please try again."
       );
     }
   };
@@ -55,10 +63,12 @@ function Register() {
   return (
     <div className="register-container">
       <div className="register-card">
+
         <h1>Create Todo Account</h1>
         <h2 className="subtitle">Sign up in Todo</h2>
 
         <form onSubmit={handleSubmit}>
+
           <div className="input-group">
             <label>Full Name</label>
             <input
@@ -70,6 +80,7 @@ function Register() {
               required
             />
           </div>
+
 
           <div className="input-group">
             <label>Email</label>
@@ -83,39 +94,70 @@ function Register() {
             />
           </div>
 
+
           <div className="input-group">
             <label>Password</label>
-            <input
-              type="password"
-              name="password"
-              placeholder="Create a password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-            />
+
+            <div className="password-wrapper">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                placeholder="Create a password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+              />
+
+              <span
+                className="eye-icon"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </span>
+            </div>
+
           </div>
+
 
           <div className="input-group">
             <label>Confirm Password</label>
-            <input
-              type="password"
-              name="confirmPassword"
-              placeholder="Confirm your password"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              required
-            />
+
+            <div className="password-wrapper">
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                name="confirmPassword"
+                placeholder="Confirm your password"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                required
+              />
+
+              <span
+                className="eye-icon"
+                onClick={() =>
+                  setShowConfirmPassword(!showConfirmPassword)
+                }
+              >
+                {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+              </span>
+
+            </div>
+
           </div>
+
 
           <button className="register-btn" type="submit">
             Create Account
           </button>
+
         </form>
+
 
         <p className="login-link">
           Already have an account?
           <Link to="/login"> Login</Link>
         </p>
+
       </div>
     </div>
   );

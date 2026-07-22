@@ -5,7 +5,9 @@ const createTodo = async (req, res) => {
     const todo = await Todo.create({
       taskName: req.body.taskName,
       status:req.body.status,
+      priority: req.body.priority,
       user: req.user.id,
+      
     });
 
     res.status(201).json({
@@ -76,8 +78,9 @@ const updateTodo = async (req, res) => {
             {
   taskName: req.body.taskName,
   status:req.body.status,
+  priority: req.body.priority,
 },
-            { new: true }
+            {returnDocument: "after"}
         );
 
         if (!todo) {
