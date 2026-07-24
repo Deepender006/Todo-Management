@@ -3,31 +3,42 @@ const bcrypt=require("bcryptjs");
 const jwt=require("jsonwebtoken");
 //SIGNUP
 const signup = async (req, res) => {
+  console.time("Signup API");
+
   try {
     const { name, email, password } = req.body;
- // Check if user already exists
+
+    console.time("Find User");
     const existingUser = await User.findOne({ email });
+    console.timeEnd("Find User");
 
     if (existingUser) {
+      console.timeEnd("Signup API");
       return res.status(400).json({
         message: "User already exists",
       });
     }
- // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create new user
+    console.time("Hash Password");
+    const hashedPassword = await bcrypt.hash(password, 10);
+    console.timeEnd("Hash Password");
+
+    console.time("Create User");
     const user = await User.create({
       name,
       email,
       password: hashedPassword,
     });
+    console.timeEnd("Create User");
+
+    console.timeEnd("Signup API");
 
     res.status(201).json({
       message: "User registered successfully",
       user,
     });
   } catch (error) {
+    console.timeEnd("Signup API");
     res.status(500).json({
       message: error.message,
     });
