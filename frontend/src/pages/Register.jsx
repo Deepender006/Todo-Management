@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import API from "../api";
+import AppSnackbar from "../components/AppSnackbar";
 import "./Register.css";
 
 function Register() {
@@ -9,6 +10,19 @@ function Register() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
+  const handleCloseSnackbar = () => {
+    setSnackbar((prev) => ({
+      ...prev,
+      open: false,
+    }));
+  };
 
   const [formData, setFormData] = useState({
     name: "",
@@ -28,7 +42,11 @@ function Register() {
     e.preventDefault();
 
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match");
+      setSnackbar({
+        open: true,
+        message: "Passwords do not match",
+        severity: "error",
+      });
       return;
     }
 
@@ -39,7 +57,11 @@ function Register() {
         password: formData.password,
       });
 
-      alert(res.data.message || "User Registered Successfully");
+      setSnackbar({
+        open: true,
+        message: res.data.message || "User Registered Successfully",
+        severity: "success",
+      });
 
       setFormData({
         name: "",
@@ -48,15 +70,20 @@ function Register() {
         confirmPassword: "",
       });
 
-      navigate("/login");
+      setTimeout(() => {
+        navigate("/login");
+      }, 1500);
 
     } catch (err) {
       console.log(err);
 
-      alert(
-        err.response?.data?.message ||
-        "Registration Failed. Please try again."
-      );
+      setSnackbar({
+        open: true,
+        message:
+          err.response?.data?.message ||
+          "Registration Failed. Please try again.",
+        severity: "error",
+      });
     }
   };
 
@@ -81,7 +108,6 @@ function Register() {
             />
           </div>
 
-
           <div className="input-group">
             <label>Email</label>
             <input
@@ -93,7 +119,6 @@ function Register() {
               required
             />
           </div>
-
 
           <div className="input-group">
             <label>Password</label>
@@ -115,9 +140,7 @@ function Register() {
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </span>
             </div>
-
           </div>
-
 
           <div className="input-group">
             <label>Confirm Password</label>
@@ -140,11 +163,8 @@ function Register() {
               >
                 {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
               </span>
-
             </div>
-
           </div>
-
 
           <button className="register-btn" type="submit">
             Create Account
@@ -152,11 +172,17 @@ function Register() {
 
         </form>
 
-
         <p className="login-link">
           Already have an account?
           <Link to="/login"> Login</Link>
         </p>
+
+        <AppSnackbar
+          open={snackbar.open}
+          message={snackbar.message}
+          severity={snackbar.severity}
+          onClose={handleCloseSnackbar}
+        />
 
       </div>
     </div>

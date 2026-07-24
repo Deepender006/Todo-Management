@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../api";
+import AppSnackbar from "../components/AppSnackbar";
 import "./Dashboard.css";
 
 function Dashboard() {
@@ -11,6 +12,19 @@ function Dashboard() {
   const [priority, setPriority] = useState("Medium");
   const [todos, setTodos] = useState([]);
   const [editId, setEditId] = useState(null);
+
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
+  const handleCloseSnackbar = () => {
+    setSnackbar((prev) => ({
+      ...prev,
+      open: false,
+    }));
+  };
 
   const token = localStorage.getItem("token");
 
@@ -45,7 +59,13 @@ function Dashboard() {
             },
           }
         );
-        alert("Todo Updated Successfully");
+
+        setSnackbar({
+          open: true,
+          message: "Todo Updated Successfully",
+          severity: "success",
+        });
+
       } else {
         await API.post(
           "/todos",
@@ -60,7 +80,12 @@ function Dashboard() {
             },
           }
         );
-        alert("Todo Added Successfully");
+
+        setSnackbar({
+          open: true,
+          message: "Todo Added Successfully",
+          severity: "success",
+        });
       }
 
       setTaskName("");
@@ -71,6 +96,12 @@ function Dashboard() {
 
     } catch (err) {
       console.log(err.response?.data || err.message);
+
+      setSnackbar({
+        open: true,
+        message: "Something went wrong",
+        severity: "error",
+      });
     }
   };
 
@@ -91,10 +122,23 @@ function Dashboard() {
           Authorization: `Bearer ${token}`,
         },
       });
-      alert("Todo Deleted Successfully");
+
+      setSnackbar({
+        open: true,
+        message: "Todo Deleted Successfully",
+        severity: "success",
+      });
+
       await getTodos();
+
     } catch (err) {
       console.log(err.response?.data || err.message);
+
+      setSnackbar({
+        open: true,
+        message: "Failed to delete todo",
+        severity: "error",
+      });
     }
   };
 
@@ -162,6 +206,13 @@ function Dashboard() {
             )}
           </ul>
         </div>
+
+        <AppSnackbar
+          open={snackbar.open}
+          message={snackbar.message}
+          severity={snackbar.severity}
+          onClose={handleCloseSnackbar}
+        />
       </div>
     </div>
   );

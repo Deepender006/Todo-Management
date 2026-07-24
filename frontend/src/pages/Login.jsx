@@ -2,12 +2,26 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import API from "../api";
+import AppSnackbar from "../components/AppSnackbar";
 import "./Login.css";
 
 function Login() {
   const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
+
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
+  const handleCloseSnackbar = () => {
+    setSnackbar((prev) => ({
+      ...prev,
+      open: false,
+    }));
+  };
 
   const [formData, setFormData] = useState({
     email: "",
@@ -26,11 +40,25 @@ function Login() {
 
     try {
       const res = await API.post("/auth/signin", formData);
+
       localStorage.setItem("token", res.data.token);
-      alert("Login Successful");
-      navigate("/dashboard");
+
+      setSnackbar({
+        open: true,
+        message: "Login Successful",
+        severity: "success",
+      });
+
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 1500);
+
     } catch (err) {
-      alert(err.response?.data?.message || "Login Failed");
+      setSnackbar({
+        open: true,
+        message: err.response?.data?.message || "Login Failed",
+        severity: "error",
+      });
     }
   };
 
@@ -82,6 +110,13 @@ function Login() {
           Don't have an account?
           <Link to="/"> Register</Link>
         </p>
+
+        <AppSnackbar
+          open={snackbar.open}
+          message={snackbar.message}
+          severity={snackbar.severity}
+          onClose={handleCloseSnackbar}
+        />
       </div>
     </div>
   );
