@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import API from "../api";
-import AppSnackbar from "../components/AppSnackbar";
+import AppSnackbar from "../components/Snackbar";
 import "./Login.css";
 
 function Login() {

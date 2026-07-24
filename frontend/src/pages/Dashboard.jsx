@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../api";
-import AppSnackbar from "../components/AppSnackbar";
+import AppSnackbar from "../components/Snackbar";
 import "./Dashboard.css";
 
 function Dashboard() {
