@@ -6,18 +6,21 @@ import "./Dashboard.css";
 
 function Dashboard() {
   const navigate = useNavigate();
-
   const [taskName, setTaskName] = useState("");
   const [status, setStatus] = useState("Not Started");
   const [priority, setPriority] = useState("Medium");
   const [todos, setTodos] = useState([]);
   const [editId, setEditId] = useState(null);
-
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const limit = 5;
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
     severity: "success",
   });
+
+  const token = localStorage.getItem("token");
 
   const handleCloseSnackbar = () => {
     setSnackbar((prev) => ({
@@ -26,16 +29,17 @@ function Dashboard() {
     }));
   };
 
-  const token = localStorage.getItem("token");
-
   const getTodos = async () => {
     try {
-      const res = await API.get("/todos", {
+      const res = await API.get(`/todos?page=${page}&limit=${limit}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
+      console.log(res.data);
+      console.log("Todos received:", res.data.data.length);
       setTodos(res.data.data);
+      setTotalPages(res.data.totalPages);
     } catch (err) {
       console.log(err.response?.data || err.message);
     }
@@ -43,7 +47,6 @@ function Dashboard() {
 
   const saveTodo = async () => {
     if (!taskName.trim()) return;
-
     try {
       if (editId) {
         await API.put(
@@ -59,13 +62,11 @@ function Dashboard() {
             },
           }
         );
-
         setSnackbar({
           open: true,
           message: "Todo Updated Successfully",
           severity: "success",
         });
-
       } else {
         await API.post(
           "/todos",
@@ -80,23 +81,19 @@ function Dashboard() {
             },
           }
         );
-
         setSnackbar({
           open: true,
           message: "Todo Added Successfully",
           severity: "success",
         });
       }
-
       setTaskName("");
       setStatus("Not Started");
       setPriority("Medium");
       setEditId(null);
       await getTodos();
-
     } catch (err) {
       console.log(err.response?.data || err.message);
-
       setSnackbar({
         open: true,
         message: "Something went wrong",
@@ -115,25 +112,20 @@ function Dashboard() {
   const deleteTodo = async (id) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this todo?");
     if (!confirmDelete) return;
-
     try {
       await API.delete(`/todos/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-
       setSnackbar({
         open: true,
         message: "Todo Deleted Successfully",
         severity: "success",
       });
-
-      await getTodos();
-
+      getTodos();
     } catch (err) {
       console.log(err.response?.data || err.message);
-
       setSnackbar({
         open: true,
         message: "Failed to delete todo",
@@ -149,16 +141,17 @@ function Dashboard() {
 
   useEffect(() => {
     getTodos();
-  }, []);
+  }, [page]);
 
   return (
     <div className="dashboard-container">
       <div className="dashboard-card">
         <div className="dashboard-header">
           <h2>Todo Dashboard</h2>
-          <button className="logout-btn" onClick={logout}>Logout</button>
+          <button className="logout-btn" onClick={logout}>
+            Logout
+          </button>
         </div>
-
         <div className="todo-input">
           <input
             type="text"
@@ -166,24 +159,20 @@ function Dashboard() {
             value={taskName}
             onChange={(e) => setTaskName(e.target.value)}
           />
-
           <select value={status} onChange={(e) => setStatus(e.target.value)}>
             <option value="Not Started">Not Started</option>
             <option value="In Progress">In Progress</option>
             <option value="Completed">Completed</option>
           </select>
-
           <select value={priority} onChange={(e) => setPriority(e.target.value)}>
             <option value="Low">Low Priority</option>
             <option value="Medium">Medium Priority</option>
             <option value="High">High Priority</option>
           </select>
-
           <button className="add-btn" onClick={saveTodo}>
             {editId ? "Update Todo" : "Add Todo"}
           </button>
         </div>
-
         <div className="todo-list">
           <ul>
             {todos.length > 0 ? (
@@ -194,7 +183,6 @@ function Dashboard() {
                     <span>Status: {todo.status}</span>
                     <span>Priority: {todo.priority}</span>
                   </div>
-
                   <div>
                     <button onClick={() => editTodo(todo)}>Edit</button>
                     <button onClick={() => deleteTodo(todo._id)}>Delete</button>
@@ -206,7 +194,17 @@ function Dashboard() {
             )}
           </ul>
         </div>
-
+        <div className="pagination">
+          <button disabled={page === 1} onClick={() => setPage(page - 1)}>
+            Previous
+          </button>
+          <span>
+            Page {page} of {totalPages}
+          </span>
+          <button disabled={page === totalPages} onClick={() => setPage(page + 1)}>
+            Next
+          </button>
+        </div>
         <AppSnackbar
           open={snackbar.open}
           message={snackbar.message}
@@ -217,5 +215,4 @@ function Dashboard() {
     </div>
   );
 }
-
 export default Dashboard;

@@ -21,17 +21,29 @@ const createTodo = async (req, res) => {
     });
   }
 };
-// GET ALL TODOS 
+// GET ALL TODOS
 const getTodos = async (req, res) => {
     try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 5;
+        const skip = (page - 1) * limit;
         const todos = await Todo.find({
+            user: req.user.id
+        })
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit);
+        
+        const totalTodos = await Todo.countDocuments({
             user: req.user.id
         });
 
         res.status(200).json({
             message: "Todo received successfully",
-            count: todos.length,
-            data: todos
+            data: todos,
+            currentPage: page,
+            totalPages: Math.ceil(totalTodos / limit),
+            totalTodos: totalTodos
         });
 
     } catch (error) {
@@ -40,7 +52,7 @@ const getTodos = async (req, res) => {
             error: error.message
         });
     }
-};
+}; 
 // GET TODO BY ID
 const getTodoById = async (req, res) => {
     try {
