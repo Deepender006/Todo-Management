@@ -124,7 +124,7 @@
   flex: 1;
   overflow-y: auto;
   margin-bottom: 20px;
-}g
+}
 .todo-details {
   display: flex;
   flex-direction: column;
