@@ -27,16 +27,22 @@ const getTodos = async (req, res) => {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 5;
         const skip = (page - 1) * limit;
-        const todos = await Todo.find({
-            user: req.user.id
-        })
+        const search = req.query.search ||"";
+        const query = {
+            user: req.user.id,
+            taskName: {
+            $regex: search,
+            $options: "i",
+          },
+        };
+        console.log("Search:", search);
+        console.log("Query:", query);
+        const todos = await Todo.find(query)
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit);
         
-        const totalTodos = await Todo.countDocuments({
-            user: req.user.id
-        });
+        const totalTodos = await Todo.countDocuments(query);
 
         res.status(200).json({
             message: "Todo received successfully",

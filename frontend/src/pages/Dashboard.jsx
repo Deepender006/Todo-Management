@@ -14,6 +14,8 @@ function Dashboard() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const limit = 5;
+  const [search , setSearch] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
@@ -31,13 +33,11 @@ function Dashboard() {
 
   const getTodos = async () => {
     try {
-      const res = await API.get(`/todos?page=${page}&limit=${limit}`, {
+      const res = await API.get(`/todos?page=${page}&limit=${limit}&search=${searchQuery}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log(res.data);
-      console.log("Todos received:", res.data.data.length);
       setTodos(res.data.data);
       setTotalPages(res.data.totalPages);
     } catch (err) {
@@ -141,7 +141,7 @@ function Dashboard() {
 
   useEffect(() => {
     getTodos();
-  }, [page]);
+  }, [page,searchQuery]);
 
   return (
     <div className="dashboard-container">
@@ -173,6 +173,23 @@ function Dashboard() {
             {editId ? "Update Todo" : "Add Todo"}
           </button>
         </div>
+        <div className="search-box">
+         <input
+            type="text"
+            placeholder="Search Todo..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+
+        <button
+         onClick={() => {
+          setPage(1);
+          setSearchQuery(search);
+         }}
+        >
+          Search
+        </button>
+       </div>
         <div className="todo-list">
           <ul>
             {todos.length > 0 ? (

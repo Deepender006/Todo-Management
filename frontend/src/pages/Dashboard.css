@@ -198,3 +198,21 @@
 .pagination span {
   font-weight: 600;
 }
+.search-box {
+  display: flex;
+  gap: 10px;
+  margin: 15px 0;
+}
+
+.search-box button {
+  padding: 10px 16px;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.search-box button:hover {
+  background:#dc2626;
+}
