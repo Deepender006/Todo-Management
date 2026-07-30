@@ -17,13 +17,15 @@
 
 .dashboard-card {
   width: 700px;
-  min-height: 550px;
+  height: 650px;
   padding: 35px;
   background: rgba(255,255,255,0.75);
   backdrop-filter: blur(8px);
   border-radius: 20px;
   box-shadow: 0 20px 40px rgba(0,0,0,0.25);
-  animation: slideUp 0.5s ease;
+  display: flex;
+  flex-direction: column;
+  
 }
 
 @keyframes slideUp {
@@ -118,6 +120,11 @@
   border-radius: 12px;
   box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
+.todo-list {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 20px;
+}g
 .todo-details {
   display: flex;
   flex-direction: column;
