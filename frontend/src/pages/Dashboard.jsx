@@ -16,6 +16,7 @@ function Dashboard() {
   const limit = 5;
   const [search , setSearch] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [totalTodos, setTotalTodos] = useState(0);
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
@@ -38,8 +39,13 @@ function Dashboard() {
           Authorization: `Bearer ${token}`,
         },
       });
+      if (page !== res.data.currentPage) {
+      setPage(res.data.currentPage);
+      return;
+    }
       setTodos(res.data.data);
       setTotalPages(res.data.totalPages);
+      setTotalTodos(res.data.totalTodos);
     } catch (err) {
       console.log(err.response?.data || err.message);
     }
@@ -123,7 +129,7 @@ function Dashboard() {
         message: "Todo Deleted Successfully",
         severity: "success",
       });
-      getTodos();
+      await getTodos();
     } catch (err) {
       console.log(err.response?.data || err.message);
       setSnackbar({
@@ -211,17 +217,34 @@ function Dashboard() {
             )}
           </ul>
         </div>
-        <div className="pagination">
-          <button disabled={page === 1} onClick={() => setPage(page - 1)}>
-            Previous
-          </button>
-          <span>
-            Page {page} of {totalPages}
-          </span>
-          <button disabled={page === totalPages} onClick={() => setPage(page + 1)}>
-            Next
-          </button>
-        </div>
+        {totalPages > 0 && (
+  <div className="pagination">
+    <button
+      disabled={page === 1}
+      onClick={() => {
+      if (page > 1) {
+     setPage(page - 1);
+    }
+}}
+    >
+      Previous
+    </button>
+    <span>
+      Page {page} of {totalPages}
+    </span>
+    <button
+      disabled={page >= totalPages}
+      onClick={() => {
+     if (page < totalPages) {
+     setPage(page + 1);
+    }
+}}
+      
+    >
+      Next
+    </button>
+  </div>
+)}
         <AppSnackbar
           open={snackbar.open}
           message={snackbar.message}

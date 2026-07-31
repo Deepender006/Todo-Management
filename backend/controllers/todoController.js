@@ -26,7 +26,7 @@ const getTodos = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 5;
-        const skip = (page - 1) * limit;
+        
         const search = req.query.search ||"";
         const query = {
             user: req.user.id,
@@ -37,18 +37,27 @@ const getTodos = async (req, res) => {
         };
         console.log("Search:", search);
         console.log("Query:", query);
+        const totalTodos = await Todo.countDocuments(query);
+        const totalPages = Math.ceil(totalTodos / limit);
+
+        let currentPage = page;
+
+        if (totalPages === 0) {
+        currentPage = 1;
+        } else if (currentPage > totalPages) {
+         currentPage = totalPages;
+        }
+
+        const skip = (currentPage - 1) * limit;
         const todos = await Todo.find(query)
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit);
-        
-        const totalTodos = await Todo.countDocuments(query);
-
         res.status(200).json({
             message: "Todo received successfully",
             data: todos,
-            currentPage: page,
-            totalPages: Math.ceil(totalTodos / limit),
+            currentPage,
+            totalPages,
             totalTodos: totalTodos
         });
 
